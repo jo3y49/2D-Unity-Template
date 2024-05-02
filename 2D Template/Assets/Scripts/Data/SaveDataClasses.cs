@@ -43,12 +43,14 @@ public class SettingsData
 public class GameData
 {
     public PlayerData playerData = new();
+    public StatData statData = new();
     public WorldData worldData = new();
     public SettingsData settingsData = new();
 
     public GameData NewGame()
     {
         playerData = new();
+        statData = new();
         worldData = new();
 
         return this;
