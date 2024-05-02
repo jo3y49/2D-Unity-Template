@@ -4,8 +4,12 @@ using UnityEngine;
 
 public static class SaveSystem
 {
-    private static string path = Application.persistentDataPath + "/saveData.json";
-    private static string webGLKey = "GameData";
+    private static readonly string path = Application.persistentDataPath + "/saveData.json";
+    
+    #pragma warning disable 0414
+    private static readonly string webGLKey = "GameData";
+    #pragma warning restore 0414
+    
 
     [DllImport("__Internal")]
     private static extern void SaveToLocalStorage(string key, string value);
