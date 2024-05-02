@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public abstract class GameManager : MonoBehaviour {
-    public static GameManager Instance;
+    public static GameManager Instance { get; private set; }
     protected GameData gameData;
     private void Awake() {
         if (Instance == null)
