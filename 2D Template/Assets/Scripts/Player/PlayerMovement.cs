@@ -24,15 +24,15 @@ public class PlayerMovement : MonoBehaviour {
 
         actions.Player.Move.performed += MoveCharacter;
         actions.Player.Move.canceled += context => StopCharacter();
-        actions.Player.Sprint.performed += context => isSprinting = true;
-        actions.Player.Sprint.canceled += context => isSprinting = false;
+        actions.Player.Sprint.performed += context => Sprint(true);
+        actions.Player.Sprint.canceled += context => Sprint(false);
     }
 
     private void OnDisable() {
         actions.Player.Move.performed -= MoveCharacter;
         actions.Player.Move.canceled -= context => StopCharacter();
-        actions.Player.Sprint.performed -= context => isSprinting = true;
-        actions.Player.Sprint.canceled -= context => isSprinting = false;
+        actions.Player.Sprint.performed += context => Sprint(true);
+        actions.Player.Sprint.canceled += context => Sprint(false);
 
         StopCharacter();
         isSprinting = false;
@@ -44,8 +44,17 @@ public class PlayerMovement : MonoBehaviour {
     {
         moveInput = context.ReadValue<Vector2>().normalized;
 
+        // deadzone check to prevent joystick drift
+        if (Mathf.Abs(moveInput.x) < .06f) moveInput.x = 0;
+        if (Mathf.Abs(moveInput.y) < .06f) moveInput.y = 0;
+
         // try making it possible to stop while facing diagonally
         direction = DirectionEnum.ConvertVector2ToDirectionDiagonals(moveInput);
+    }
+
+    private void Sprint(bool b)
+    {
+        isSprinting = b;
     }
 
     private void FixedUpdate() {
