@@ -34,6 +34,7 @@ public abstract class GameManager : MonoBehaviour {
     public void QuitGame()
     {
         // add a prompt to save first later
+        Time.timeScale = 1;
         SceneManager.LoadScene(0);
     }
 }

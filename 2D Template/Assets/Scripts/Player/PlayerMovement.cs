@@ -4,19 +4,19 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
 public class PlayerMovement : MonoBehaviour {
+    public static PlayerMovement Instance { get; private set; }
     private Rigidbody2D rb;
     private InputActions actions;
     private Vector2 moveInput;
     private bool isSprinting;
-
-    [HideInInspector]
-    public Vector3 playerDirection;
+    public DirectionEnum.Direction direction = DirectionEnum.Direction.Down;
     public float moveSpeed = 5;    
     public float sprintMultiplier = 1.5f;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
         actions = new InputActions();
+        Instance = this;
     }
 
     private void OnEnable() {
@@ -26,8 +26,6 @@ public class PlayerMovement : MonoBehaviour {
         actions.Player.Move.canceled += context => StopCharacter();
         actions.Player.Sprint.performed += context => isSprinting = true;
         actions.Player.Sprint.canceled += context => isSprinting = false;
-
-        PauseManager.PauseEvent += TogglePause;
     }
 
     private void OnDisable() {
@@ -35,8 +33,6 @@ public class PlayerMovement : MonoBehaviour {
         actions.Player.Move.canceled -= context => StopCharacter();
         actions.Player.Sprint.performed -= context => isSprinting = true;
         actions.Player.Sprint.canceled -= context => isSprinting = false;
-
-        PauseManager.PauseEvent -= TogglePause;
 
         StopCharacter();
         isSprinting = false;
@@ -47,9 +43,9 @@ public class PlayerMovement : MonoBehaviour {
     private void MoveCharacter(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>().normalized;
-        playerDirection = -new Vector3(moveInput.x, 0, moveInput.y).normalized;
 
-        transform.rotation = Quaternion.LookRotation(playerDirection);
+        // try making it possible to stop while facing diagonally
+        direction = DirectionEnum.ConvertVector2ToDirectionDiagonals(moveInput);
     }
 
     private void FixedUpdate() {

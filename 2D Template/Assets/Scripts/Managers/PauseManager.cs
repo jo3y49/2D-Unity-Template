@@ -8,15 +8,8 @@ public class PauseManager : MonoBehaviour {
     public InputActions actions;
 
     private void Awake() {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            actions = new InputActions();
-        } else
-        {
-            Destroy(gameObject);
-        }
+        Instance = this;
+        actions = new InputActions();
     }
 
     private void OnEnable() {
@@ -29,18 +22,11 @@ public class PauseManager : MonoBehaviour {
         actions.Menu.Disable();
     }
 
-    private void TogglePause() {
-        bool resume = Time.timeScale == 0;
-
-        if (resume)
-        {
-            Time.timeScale = 1;
-            PauseEvent?.Invoke(false);
-        }
-        else
-        {
-            Time.timeScale = 0;
-            PauseEvent?.Invoke(true);
-        }
+    public void TogglePause() {
+        bool paused = Time.timeScale == 0;
+        
+        Time.timeScale = paused ? 1 : 0;
+        PauseEvent?.Invoke(paused);
+        PlayerMovement.Instance.TogglePause(!paused);
     }
 }
