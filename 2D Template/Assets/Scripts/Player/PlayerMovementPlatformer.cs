@@ -3,15 +3,18 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
-public class PlayerMovement : MonoBehaviour {
-    public static PlayerMovement Instance { get; private set; }
+public class PlayerMovementPlatformer : MonoBehaviour {
+    public static PlayerMovementPlatformer Instance { get; private set; }
     private Rigidbody2D rb;
     private InputActions actions;
     private Vector2 moveInput;
-    private bool isSprinting;
+    private bool isSprinting = false;
+    private bool isJumping = false;
+    private bool canJump = true;
     public DirectionEnum.Direction direction = DirectionEnum.Direction.Down;
     public float moveSpeed = 5;
     public float sprintMultiplier = 1.5f;
+    public float jumpForce = 10;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
@@ -26,6 +29,7 @@ public class PlayerMovement : MonoBehaviour {
         actions.Player.Move.canceled += context => StopCharacter();
         actions.Player.Sprint.performed += context => isSprinting = true;
         actions.Player.Sprint.canceled += context => isSprinting = false;
+        actions.Player.Jump.performed += context => ApplyJump();
     }
 
     private void OnDisable() {
@@ -33,6 +37,7 @@ public class PlayerMovement : MonoBehaviour {
         actions.Player.Move.canceled -= context => StopCharacter();
         actions.Player.Sprint.performed -= context => isSprinting = true;
         actions.Player.Sprint.canceled -= context => isSprinting = false;
+        actions.Player.Jump.performed -= context => ApplyJump();
 
         StopCharacter();
         isSprinting = false;
@@ -56,12 +61,19 @@ public class PlayerMovement : MonoBehaviour {
     {
         float speedToUse = isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
 
-        rb.velocity = moveInput * speedToUse;
+        float moveX = moveInput.x * speedToUse;
+        float moveY = rb.velocity.y;
+        rb.velocity = new Vector2(moveX, moveY);
     }
     private void StopCharacter()
     {
         moveInput = Vector2.zero;
         rb.velocity = moveInput;
+    }
+
+    public void ApplyJump()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
     }
 
     public void TogglePause(bool pause)
