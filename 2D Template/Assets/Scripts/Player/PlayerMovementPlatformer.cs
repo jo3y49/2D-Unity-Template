@@ -9,6 +9,7 @@ public class PlayerMovementPlatformer : MonoBehaviour {
     private Rigidbody2D rb;
     private InputActions actions;
     private Vector2 moveInput;
+    public DirectionEnum.Direction direction = DirectionEnum.Direction.Right;
 
     public float moveSpeed = 5;
     public float sprintMultiplier = 1.5f;
@@ -19,11 +20,13 @@ public class PlayerMovementPlatformer : MonoBehaviour {
     private bool isGrounded = false;
     private bool canJump = true;
 
-    public float dashSpeed = 20f;
+    public float dashSpeed = 16f;
     public float dashDuration = .1f;
     public float dashCooldown = 1f;
+    private bool isDashing = false;
 
 
+    private float originalGravityScale;
     public float groundCheckDistance = 0.1f;
     public Transform leftCheck;
     public Transform middleCheck;
@@ -35,6 +38,7 @@ public class PlayerMovementPlatformer : MonoBehaviour {
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
         actions = new InputActions();
+        originalGravityScale = rb.gravityScale;
         Instance = this;
     }
 
@@ -56,7 +60,6 @@ public class PlayerMovementPlatformer : MonoBehaviour {
         actions.Player.Jump.performed -= context => Jump();
 
         StopCharacter();
-        isSprinting = false;
 
         actions.Player.Disable();
     }
@@ -68,19 +71,22 @@ public class PlayerMovementPlatformer : MonoBehaviour {
         // deadzone check to prevent joystick drift
         if (Mathf.Abs(moveInput.x) < .06f) moveInput.x = 0;
         if (Mathf.Abs(moveInput.y) < .06f) moveInput.y = 0;
+
+        direction = DirectionEnum.ConvertVector2ToDirectionNoDiagonals(moveInput * Vector2.right);
     }
 
     private void Sprint(bool b)
     {
-        // if (b) Dash();
+        if (b && !isGrounded) AirDash();
 
         isSprinting = b;
     }
 
-    // private void Dash()
-    // {
-    //     dashCoroutine ??= StartCoroutine(DashCoroutine());
-    // }
+    private void AirDash()
+    {
+        isSprinting = false;
+        dashCoroutine ??= StartCoroutine(DashCoroutine());
+    }
 
     public void Jump()
     {
@@ -96,6 +102,8 @@ public class PlayerMovementPlatformer : MonoBehaviour {
 
     private void Movement()
     {
+        if (isDashing == true) return;
+
         float speedToUse = isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
 
         float moveX = moveInput.x * speedToUse;
@@ -106,10 +114,12 @@ public class PlayerMovementPlatformer : MonoBehaviour {
     {
         moveInput = Vector2.zero;
         rb.velocity *= Vector2.up;
+        isSprinting = false;
     }
 
     private IEnumerator JumpCoroutine()
     {
+        KillDash();
         canJump = false;
         float initialJumpPosition = transform.position.y;
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
@@ -119,35 +129,34 @@ public class PlayerMovementPlatformer : MonoBehaviour {
             yield return null;
         }
 
-        rb.velocity = new Vector2(rb.velocity.x, 0f);
-        jumpCoroutine = null;
+        KillJump();
     }
 
-    // private IEnumerator DashCoroutine()
-    // {
-    //     float originalGravityScale = rb.gravityScale;
+    private IEnumerator DashCoroutine()
+    {
+        KillJump();
+        isDashing = true;
 
-    //     // Disable gravity for the Rigidbody2D component
-    //     rb.gravityScale = 0f;
+        // Disable gravity for the Rigidbody2D component
+        rb.gravityScale = 0f;
 
-    //     // Determine dash direction based on the sprite's orientation
-    //     Vector2 dashDirection = transform.localScale.x > 0 ? Vector2.right : Vector2.left;
+        // Determine dash direction based on the sprite's orientation
+        Vector2 dashDirection = DirectionEnum.ConvertDirectionToVector2(direction);
 
-    //     // Apply dash force, maintaining the current y velocity
-    //     rb.velocity = new Vector2(dashDirection.x * dashSpeed, 0f);
+        // Apply dash force, maintaining the current y velocity
+        rb.velocity = new Vector2(dashDirection.x * dashSpeed, 0f);
         
-    //     yield return new WaitForSeconds(dashDuration);
+        yield return new WaitForSeconds(dashDuration);
 
-    //     rb.gravityScale = originalGravityScale;
+        rb.gravityScale = originalGravityScale;
 
-    //     // Reset velocity to what it was before the dash
-    //     rb.velocity = Vector2.zero;
+        isDashing = false;
 
-    //     // Wait for the cooldown
-    //     yield return new WaitForSeconds(dashCooldown);
+        // Wait for the cooldown
+        yield return new WaitForSeconds(dashCooldown);
 
-    //     dashCoroutine = null;
-    // }
+        dashCoroutine = null;
+    }
 
     private void GroundCheck()
     {
@@ -161,7 +170,20 @@ public class PlayerMovementPlatformer : MonoBehaviour {
         {
             canJump = true;
         }
+    }
 
+    private void KillJump()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, 0f);
+        if (jumpCoroutine != null) StopCoroutine(jumpCoroutine);
+        jumpCoroutine = null;
+        canJump = false;
+    }
+
+    private void KillDash()
+    {
+        rb.gravityScale = originalGravityScale;
+        isDashing = false;
     }
 
     public void TogglePause(bool pause)

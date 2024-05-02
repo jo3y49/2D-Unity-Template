@@ -216,13 +216,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d120bacf6904f1543a761e142496dd00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  direction: 2
   moveSpeed: 5
-  dashSpeed: 20
-  dashDuration: 0.1
-  dashCooldown: 1
   sprintMultiplier: 1.5
   jumpForce: 10
   jumpHeight: 2
+  dashSpeed: 16
+  dashDuration: 0.1
+  dashCooldown: 1
   groundCheckDistance: 0.1
   leftCheck: {fileID: 7063263871014193398}
   middleCheck: {fileID: 3754554093076571928}
