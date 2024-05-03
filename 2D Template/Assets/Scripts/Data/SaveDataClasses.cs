@@ -26,6 +26,7 @@ public class StatData
     public int damageTaken;
     public int livesLost;
     public int coinsCollected;
+    public int coinsSpent;
     public int scoreCollected;
     public int itemsCollected;
 }

@@ -3,6 +3,20 @@ using System.Linq;
 using UnityEngine;
 
 public class GameDataManager : GameManager {
+    public static GameDataManager Instance { get; protected set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     //PlayerData
 
@@ -82,7 +96,7 @@ public class GameDataManager : GameManager {
         gameData.statData.coinsCollected += coins;
     }
 
-    public void RemoveCoins(int coins = 1)
+    public int RemoveCoins(int coins = 1)
     {
         Mathf.Abs(coins);
         if (gameData.playerData.coins - coins < 0)
@@ -91,6 +105,14 @@ public class GameDataManager : GameManager {
         }
 
         gameData.playerData.coins -= coins;
+
+        return coins;
+    }
+
+    public void SpendCoins(int coins = 1)
+    {
+        int newCoins = RemoveCoins(coins);
+        gameData.statData.coinsSpent += newCoins;
     }
 
     public int GetCoins()

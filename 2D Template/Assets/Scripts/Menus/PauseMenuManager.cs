@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PauseMenuManager : MonoBehaviour {
@@ -11,6 +13,7 @@ public class PauseMenuManager : MonoBehaviour {
     }
     private void Start() {
         PauseManager.PauseEvent += TogglePauseMenu;
+
         gameObject.SetActive(false);
     }
 
@@ -27,10 +30,14 @@ public class PauseMenuManager : MonoBehaviour {
     }
 
     public void Save() {
-        GameManager.Instance.SaveGameData();
+        GameDataManager gd = GameDataManager.Instance;
+        gd.SetCurrentScene(SceneManager.GetActiveScene().buildIndex);
+        gd.SetPlayerPosition(PlayerMovement.Instance.transform.position);
+
+        gd.SaveGameData();
     }
 
     public void Quit() {
-        GameManager.Instance.QuitGame();
+        GameDataManager.Instance.QuitGame();
     }
 }

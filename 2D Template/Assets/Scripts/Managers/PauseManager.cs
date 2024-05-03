@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class PauseManager : MonoBehaviour {
@@ -10,6 +11,8 @@ public class PauseManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         actions = new InputActions();
+
+        StartCoroutine(CountPlaytime());
     }
 
     private void OnEnable() {
@@ -28,5 +31,23 @@ public class PauseManager : MonoBehaviour {
         Time.timeScale = paused ? 1 : 0;
         PauseEvent?.Invoke(paused);
         PlayerMovement.Instance.TogglePause(!paused);
+    }
+
+    private IEnumerator CountPlaytime()
+    {
+        float previousTime = Time.time;
+
+        while (true)
+        {
+            if (Time.timeScale > 0)
+            {
+                float deltaTime = Time.time - previousTime;
+                GameDataManager.Instance.AddPlaytime(deltaTime);
+            }
+
+            previousTime = Time.time;
+
+            yield return null;
+        }
     }
 }

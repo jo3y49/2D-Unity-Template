@@ -16,6 +16,7 @@ public class TitleManager : MonoBehaviour {
 
     private void NewGame() {
         gameData = new GameData().NewGame();
+        gameData.worldData.currentScene = 1;
         StartGame();
     }
 
@@ -28,8 +29,8 @@ public class TitleManager : MonoBehaviour {
     }
 
     private void StartGame() {
-        GameManager.Instance.SetGameData(gameData);
-        SceneManager.LoadScene(1);
+        GameDataManager.Instance.SetGameData(gameData);
+        SceneManager.LoadScene(gameData.worldData.currentScene);
     }
 
     private void DeleteData() {
