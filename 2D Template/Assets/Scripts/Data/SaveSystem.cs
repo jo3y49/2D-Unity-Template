@@ -5,6 +5,9 @@ using UnityEngine;
 public static class SaveSystem
 {
     private static readonly string path = Application.persistentDataPath + "/saveData.json";
+
+    //test this new path next time you make a windows build
+    //private static readonly string path = Path.Combine(Application.dataPath, "savedata/saveData.json");
     
     #pragma warning disable 0414
     private static readonly string webGLKey = "GameData";
