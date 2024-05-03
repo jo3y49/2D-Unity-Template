@@ -11,6 +11,10 @@ public class PauseManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         actions = new InputActions();
+    }
+
+    private void Start() {
+        Time.timeScale = 1;
 
         StartCoroutine(CountPlaytime());
     }

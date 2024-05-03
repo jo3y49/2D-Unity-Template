@@ -10,6 +10,7 @@ public class GameDataManager : GameManager {
         if (Instance == null)
         {
             Instance = this;
+            gameData = new GameData();
             DontDestroyOnLoad(gameObject);
         }
         else

@@ -4,23 +4,23 @@ using UnityEngine.SceneManagement;
 public abstract class GameManager : MonoBehaviour {
     protected GameData gameData;
     
-    public void SetGameData(GameData gameData)
+    public virtual void SetGameData(GameData gameData)
     {
         this.gameData = gameData;
     }
 
-    public void SaveGameData()
+    public virtual void SaveGameData()
     {
         SaveSystem.SaveGameData(gameData);
     }
 
-    public void DeleteSaveData()
+    public virtual void DeleteSaveData()
     {
         // add a prompt to confirm deletion later
         SaveSystem.DeleteSaveData();
     }
 
-    public void QuitGame()
+    public virtual void QuitGame()
     {
         // add a prompt to save first later
         Time.timeScale = 1;

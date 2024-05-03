@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +23,16 @@ public static class SortEnum {
                 dictionary = dictionary.OrderBy(i => i.Key).ToDictionary(i => i.Key, i => i.Value);
                 break;
             case SortType.Value:
-                dictionary = dictionary.OrderBy(i => i.Value).ToDictionary(i => i.Key, i => i.Value);
+                // Check if value is comparable
+                if (IsComparable<TValue>())
+                {
+                    // Value type is comparable, so proceed with sorting
+                    dictionary = dictionary.OrderBy(i => i.Value).ToDictionary(i => i.Key, i => i.Value);
+                }
                 break;
             case SortType.Random:
-                int dictionaryCount = dictionary.Count;
-                dictionary = dictionary.OrderBy(i => Random.Range(0, dictionaryCount)).ToDictionary(i => i.Key, i => i.Value);
+                int randomValue = UnityEngine.Random.Range(0, dictionary.Count);
+                dictionary = dictionary.OrderBy(i => randomValue).ToDictionary(i => i.Key, i => i.Value);
                 break;
         }
 
@@ -37,4 +43,6 @@ public static class SortEnum {
 
         return dictionary;
     }
+
+    private static bool IsComparable<TValue>() => typeof(IComparable<TValue>).IsAssignableFrom(typeof(TValue)) || typeof(TValue).IsEnum;
 }

@@ -1,13 +1,14 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PauseMenuManager : MonoBehaviour {
-    public Button resumeButton, saveButton, quitButton;
+    public Button resumeButton, inventoryButton, saveButton, quitButton;
+    public GameObject inventoryMenu;
 
     private void Awake() {
         resumeButton.onClick.AddListener(Resume);
+        inventoryButton.onClick.AddListener(Inventory);
         saveButton.onClick.AddListener(Save);
         quitButton.onClick.AddListener(Quit);
     }
@@ -15,6 +16,10 @@ public class PauseMenuManager : MonoBehaviour {
         PauseManager.PauseEvent += TogglePauseMenu;
 
         gameObject.SetActive(false);
+    }
+
+    private void OnEnable() {
+        inventoryMenu.SetActive(false);
     }
 
     private void OnDestroy() {
@@ -27,6 +32,10 @@ public class PauseMenuManager : MonoBehaviour {
 
     public void Resume() {
         PauseManager.Instance.TogglePause();
+    }
+
+    public void Inventory() {
+       inventoryMenu.SetActive(true);
     }
 
     public void Save() {
