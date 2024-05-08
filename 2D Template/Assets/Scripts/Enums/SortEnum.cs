@@ -31,8 +31,8 @@ public static class SortEnum {
                 }
                 break;
             case SortType.Random:
-                int randomValue = UnityEngine.Random.Range(0, dictionary.Count);
-                dictionary = dictionary.OrderBy(i => randomValue).ToDictionary(i => i.Key, i => i.Value);
+                var random = new System.Random();
+                dictionary = dictionary.OrderBy(i => random.Next(dictionary.Count)).ToDictionary(i => i.Key, i => i.Value);
                 break;
         }
 

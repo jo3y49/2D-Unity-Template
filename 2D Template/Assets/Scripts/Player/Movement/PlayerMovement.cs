@@ -73,14 +73,14 @@ public abstract class PlayerMovement : MonoBehaviour {
         rb.velocity = moveInput * speedToUse;
     }
 
-    public virtual void TogglePause(bool pause)
+    public virtual void ToggleActive(bool active)
     {
         if (actions != null)
         {
-            if (pause)
-                actions.Player.Disable();
-            else 
+            if (active)
                 actions.Player.Enable();
+            else 
+                actions.Player.Disable();
         }
     }
 }

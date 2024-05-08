@@ -10,6 +10,8 @@ public class InventoryMenu : MonoBehaviour {
     private InventorySlot[] inventorySlots;
 
     private void Awake() {
+        closeInventoryButton.onClick.AddListener(ToggleInventory);
+
         foreach (Transform child in inventoryContainer.transform) {
             Destroy(child.gameObject);
         }
@@ -20,31 +22,46 @@ public class InventoryMenu : MonoBehaviour {
             GameObject slot = Instantiate(inventorySlotPrefab, inventoryContainer.transform);
             inventorySlots[i] = slot.GetComponent<InventorySlot>();
         }
-
-        closeInventoryButton.onClick.AddListener(() => gameObject.SetActive(false));
     }
 
     private void OnEnable() {
         UpdateInventory();
     }
 
+    public void ToggleInventory() {
+        MenuManager.Instance.ToggleMenu(gameObject);
+    }
+
     public void UpdateInventory()
     {
         if (GameDataManager.Instance == null || inventorySlots.Length <= 0) return;
 
-        IDictionary<Item, int> inventory = GameDataManager.Instance.GetInventory();
+        // IDictionary<Item, int> inventory = GameDataManager.Instance.GetInventory();
+        IDictionary<Item, int> inventory = DebugAddItems();
 
         for (int i = 0; i < inventorySlots.Length; i++)
         {
             if (i < inventory.Count)
             {
                 KeyValuePair<Item, int> item = inventory.ElementAt(i);
+                inventorySlots[i].gameObject.SetActive(true);
                 inventorySlots[i].AddItem(item.Key, item.Value);
             }
             else
             {
                 inventorySlots[i].RemoveItem();
+                inventorySlots[i].gameObject.SetActive(false);
             }
         }
+    }
+
+    private IDictionary<Item, int> DebugAddItems()
+    {
+        IDictionary<Item, int> inventory = new Dictionary<Item, int>();
+
+        foreach (Item item in ItemManager.GetInstance().GetItems().Values) {
+            inventory.Add(item, Random.Range(0, 10));
+        }
+        return inventory;
     }
 }

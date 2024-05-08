@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PauseMenuManager : MonoBehaviour {
+public class PauseMenu : MonoBehaviour {
     public Button resumeButton, saveButton, quitButton;
 
     private void Awake() {
@@ -10,22 +10,9 @@ public class PauseMenuManager : MonoBehaviour {
         saveButton.onClick.AddListener(Save);
         quitButton.onClick.AddListener(Quit);
     }
-    private void Start() {
-        PauseManager.PauseEvent += TogglePauseMenu;
-
-        gameObject.SetActive(false);
-    }
-
-    private void OnDestroy() {
-        PauseManager.PauseEvent -= TogglePauseMenu;
-    }
-
-    private void TogglePauseMenu(bool paused) {
-        gameObject.SetActive(!paused);
-    }
 
     public void Resume() {
-        PauseManager.Instance.TogglePause();
+        MenuManager.Instance.ToggleMenu(gameObject);
     }
 
     public void Save() {

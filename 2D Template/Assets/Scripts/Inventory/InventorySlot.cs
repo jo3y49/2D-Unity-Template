@@ -5,14 +5,13 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class InventorySlot : MonoBehaviour {
     private Item item;
+    [SerializeField]
     private Image icon;
+    [SerializeField]
     private TextMeshProUGUI itemName;
     private int quantity;
 
     private void Awake() {
-        icon = GetComponent<Image>();
-        itemName = GetComponentInChildren<TextMeshProUGUI>();
-
         RemoveItem();
     }
     
@@ -20,7 +19,7 @@ public class InventorySlot : MonoBehaviour {
         this.item = item;
         icon.sprite = item.icon;
         this.quantity = quantity;
-        if (itemName != null) itemName.text = item.itemName + $" {quantity}";
+        if (itemName != null) itemName.text = item.itemName + $" ({quantity})";
         icon.color = Color.white;
     }
 

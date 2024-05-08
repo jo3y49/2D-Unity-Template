@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 55f00a86d2de8cb4c9cd9170408947f0, type: 3}
-  m_Name: Sample Item
+  m_Name: Shrrom
   m_EditorClassIdentifier: 
-  itemName: Sample
-  icon: {fileID: 21300000, guid: 6ca8f930ec396714c8f14f1d80a3a26d, type: 3}
+  itemName: Shrrom
+  icon: {fileID: 21300000, guid: f7846e13555860744b87f896bd52c8c7, type: 3}
   description: 
