@@ -48,10 +48,10 @@ public class ItemManager {
 
     public IDictionary<string, Item> GetItems() { return items; }
 
-    public static void UseItem(Item item)
+    public static void UseItem(Item item, bool consume = true)
     {
         // add item use logic here
 
-        GameDataManager.Instance.RemoveFromInventory(item);
+        if (consume) GameDataManager.Instance.RemoveFromInventory(item);
     }
 }
