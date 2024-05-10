@@ -5,8 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerData
 {
-    public int maxHealth;
-    public int health;
+    public Stats stats = new(0,0,0,0);
     public int lives;
     public int coins;
     public int level;

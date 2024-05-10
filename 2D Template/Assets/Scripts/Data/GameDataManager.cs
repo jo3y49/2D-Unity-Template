@@ -21,36 +21,14 @@ public class GameDataManager : GameManager {
 
     //PlayerData
 
-    public void SetMaxHealth(int maxHealth)
+    public void SetStats(Stats stats)
     {
-        gameData.playerData.maxHealth = maxHealth;
+        gameData.playerData.stats = stats;
     }
 
-    public void AddMaxHealth(int maxHealth = 1)
+    public Stats GetStats()
     {
-        gameData.playerData.maxHealth += maxHealth;
-    }
-
-    public int GetMaxHealth()
-    {
-        return gameData.playerData.maxHealth;
-    }
-
-    public void AddHealth(int health = 1)
-    {
-        gameData.playerData.health += health;
-
-        gameData.playerData.health = Mathf.Min(health, gameData.playerData.maxHealth);
-    }
-
-    public void ResetHealth()
-    {
-        gameData.playerData.health = gameData.playerData.maxHealth;
-    }
-
-    public int GetHealth()
-    {
-        return gameData.playerData.health;
+        return gameData.playerData.stats;
     }
 
     public bool AddLives(int lives = 1)
