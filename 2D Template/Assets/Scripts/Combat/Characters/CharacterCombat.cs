@@ -7,9 +7,17 @@ public class CharacterCombat : MonoBehaviour {
     protected Stats baseStats;
     protected int turnCount = 0;
     protected List<(Func<int>, int, int)> buffList = new();
+    protected CharacterAction characterAction = new();
 
     protected virtual void Start() {
         baseStats = stats;
+
+        characterAction.AddBattleAction("Attack", CharacterActionList.AttackCharacter);
+    }
+
+    public void PrepareBattle()
+    {
+
     }
 
     public void StartTurn()
