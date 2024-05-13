@@ -6,5 +6,7 @@ public class EnemyCombat : CharacterCombat {
     protected override void Start()
     {
         stats = baseStats = enemyData.stats;
+
+        CharacterAction.AddBattleAction("Attack", CharacterActionList.AttackCharacter);
     }
 }

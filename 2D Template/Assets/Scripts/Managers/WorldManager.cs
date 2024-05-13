@@ -19,7 +19,7 @@ public class WorldManager : MonoBehaviour {
         player = PlayerMovement.Instance.gameObject;
         player.transform.position = gd.GetPlayerPosition();
 
-        // StartCoroutine(DebugStartCombat());
+        StartCoroutine(DebugStartCombat());
     }
 
     private IEnumerator DebugStartCombat()
