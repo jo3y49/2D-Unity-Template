@@ -9,6 +9,7 @@ public class MenuManager : MonoBehaviour {
 
     public GameObject pauseMenu, inventoryMenu;
     private List<GameObject> menus;
+    public CombatMenuManager combatMenuManager;
 
     private void Awake() {
         Instance = this;
@@ -20,25 +21,20 @@ public class MenuManager : MonoBehaviour {
     private void Start() {
         Time.timeScale = 1;
 
-        foreach (GameObject m in menus)
-        {
-            m.SetActive(false);
-        }
+        CloseMenus();
+        combatMenuManager.gameObject.SetActive(false);
 
         StartCoroutine(CountPlaytime());
     }
 
     private void OnEnable() {
-        actions.Menu.Enable();
-        actions.Menu.Pause.performed += context => ToggleMenu(pauseMenu);
-        actions.Menu.Inventory.performed += context => ToggleMenu(inventoryMenu);
+        ActivateMenuControls();
     }
 
     private void OnDisable() {
-        actions.Menu.Pause.performed -= context => ToggleMenu(pauseMenu);
-        actions.Menu.Inventory.performed -= context => ToggleMenu(inventoryMenu);
-        actions.Menu.Disable();
+        DeactivateMenuControls();
     }
+
     public void ToggleMenu(GameObject menu)
     {
         bool active = menu.activeSelf;
@@ -53,6 +49,31 @@ public class MenuManager : MonoBehaviour {
         Time.timeScale = active ? 1 : 0;
         PlayerMovement.Instance.ToggleActive(active);
         menu.SetActive(!active);
+    }
+
+    private void CloseMenus()
+    {
+        foreach (GameObject m in menus)
+        {
+            m.SetActive(false);
+        }
+    }
+
+    public void StartCombat(List<GameObject> playerObjects, List<GameObject> enemyObjects)
+    {
+        combatMenuManager.gameObject.SetActive(true);
+        CloseMenus();
+        DeactivateMenuControls();
+        PlayerMovement.Instance.ToggleActive(false);
+
+        combatMenuManager.Initialize(playerObjects, enemyObjects);
+    }
+
+    public void EndCombat()
+    {
+        combatMenuManager.gameObject.SetActive(false);
+        ActivateMenuControls();
+        PlayerMovement.Instance.ToggleActive(true);
     }
 
     private IEnumerator CountPlaytime()
@@ -71,5 +92,19 @@ public class MenuManager : MonoBehaviour {
 
             yield return null;
         }
+    }
+
+    private void ActivateMenuControls()
+    {
+        actions.Menu.Enable();
+        actions.Menu.Pause.performed += context => ToggleMenu(pauseMenu);
+        actions.Menu.Inventory.performed += context => ToggleMenu(inventoryMenu);
+    }
+
+    private void DeactivateMenuControls()
+    {
+        actions.Menu.Pause.performed -= context => ToggleMenu(pauseMenu);
+        actions.Menu.Inventory.performed -= context => ToggleMenu(inventoryMenu);
+        actions.Menu.Disable();
     }
 }

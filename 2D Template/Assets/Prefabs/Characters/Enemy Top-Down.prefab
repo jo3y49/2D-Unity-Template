@@ -10,7 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3722457020754715980, guid: bf0fddf2f139ae846955d4dca14fdb08, type: 3}
       propertyPath: m_Name
-      value: Enemy Variant
+      value: Enemy Top-Down
+      objectReference: {fileID: 0}
+    - target: {fileID: 3968912663483561855, guid: bf0fddf2f139ae846955d4dca14fdb08, type: 3}
+      propertyPath: m_Constraints
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4597938746897665113, guid: bf0fddf2f139ae846955d4dca14fdb08, type: 3}
       propertyPath: m_LocalPosition.x
@@ -51,6 +55,10 @@ PrefabInstance:
     - target: {fileID: 4597938746897665113, guid: bf0fddf2f139ae846955d4dca14fdb08, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6163795550843111371, guid: bf0fddf2f139ae846955d4dca14fdb08, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

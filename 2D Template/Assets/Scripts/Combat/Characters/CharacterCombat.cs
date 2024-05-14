@@ -7,24 +7,58 @@ public class CharacterCombat : MonoBehaviour {
     protected Stats baseStats;
     protected int turnCount = 0;
     protected List<(Func<int>, int, int)> buffList = new();
+    public CharacterAction CharacterAction {get; protected set;} = new();
 
     protected virtual void Start() {
         baseStats = stats;
+
+        FillActionList();
     }
 
-    public void StartTurn()
+    protected virtual void FillActionList()
+    {
+        CharacterAction.AddToActionList("Attack");
+    }
+
+    public virtual void PrepareBattle()
+    {
+
+    }
+
+    public virtual ActionResult DoRandomAction(CharacterCombat target)
+    {
+        return CharacterAction.PerformRandomBattleAction(this, target);
+    }
+
+    public virtual ActionResult DoAction(string actionName, CharacterCombat target)
+    {
+        if (CharacterAction.battleActions.ContainsKey(actionName))
+        {
+            return CharacterAction.battleActions[actionName](this, target);
+        } else
+        {
+            return null;
+        }
+    }
+
+    public virtual void StartTurn()
     {
         turnCount++;
 
         BuffCheck();
     }
 
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         stats.TakeDamage(damage);
     }
+
+    public virtual void Heal(int heal)
+    {
+        stats.Heal(heal);
+    }
     
-    public void StatBuff(StatEnum.StatType statEnum, int value, int buffLength = 1)
+    public virtual void StatBuff(StatEnum.StatType statEnum, int value, int buffLength = 1)
     {
         Func<int> targetStat = null;
 
@@ -58,7 +92,7 @@ public class CharacterCombat : MonoBehaviour {
         }
     }
 
-    public void StatDebuff(StatEnum.StatType statEnum, int value, int buffLength) => StatBuff(statEnum, -value, buffLength);
+    public virtual void StatDebuff(StatEnum.StatType statEnum, int value, int buffLength) => StatBuff(statEnum, -value, buffLength);
 
     private void BuffCheck()
     {
@@ -88,7 +122,7 @@ public class CharacterCombat : MonoBehaviour {
         buffList.Remove(buff);
     }
 
-    public void EndBattle()
+    public virtual void EndBattle()
     {
         stats = baseStats;
         buffList.Clear();

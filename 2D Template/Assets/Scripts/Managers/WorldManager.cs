@@ -1,9 +1,12 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WorldManager : MonoBehaviour {
     public static WorldManager Instance { get; protected set; }
+    [HideInInspector]
     public GameObject player;
+    public MenuManager menuManager;
 
     private void Awake()
     {
@@ -16,20 +19,22 @@ public class WorldManager : MonoBehaviour {
         player = PlayerMovement.Instance.gameObject;
         player.transform.position = gd.GetPlayerPosition();
 
-        DebugStartCombat();
+        StartCoroutine(DebugStartCombat());
     }
 
-    private void DebugStartCombat()
+    private IEnumerator DebugStartCombat()
     {
+        yield return new WaitForSeconds(1);
+
         // Start combat for debugging
         // Find all enemies in the scene with the script enemyCombat
         EnemyCombat[] enemyScripts = FindObjectsOfType<EnemyCombat>();
-        Queue<GameObject> enemies = new();
+        List<GameObject> enemies = new();
         foreach (EnemyCombat enemy in enemyScripts)
         {
-            enemies.Enqueue(enemy.gameObject);
+            enemies.Add(enemy.gameObject);
         }
-        
-        CombatManager combatManager = new CombatManager(player, enemies);
+
+        menuManager.StartCombat(new List<GameObject> {player}, enemies);
     }
 }
