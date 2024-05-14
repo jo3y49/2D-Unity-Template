@@ -12,7 +12,12 @@ public class CharacterCombat : MonoBehaviour {
     protected virtual void Start() {
         baseStats = stats;
 
-        
+        FillActionList();
+    }
+
+    protected virtual void FillActionList()
+    {
+        CharacterAction.AddToActionList("Attack");
     }
 
     public virtual void PrepareBattle()
@@ -20,16 +25,19 @@ public class CharacterCombat : MonoBehaviour {
 
     }
 
-    public virtual void DoRandomAction(CharacterCombat target)
+    public virtual ActionResult DoRandomAction(CharacterCombat target)
     {
-        CharacterAction.PerformRandomBattleAction(this, target);
+        return CharacterAction.PerformRandomBattleAction(this, target);
     }
 
-    public virtual void DoAction(string actionName, CharacterCombat target)
+    public virtual ActionResult DoAction(string actionName, CharacterCombat target)
     {
         if (CharacterAction.battleActions.ContainsKey(actionName))
         {
-            CharacterAction.battleActions[actionName](this, target);
+            return CharacterAction.battleActions[actionName](this, target);
+        } else
+        {
+            return null;
         }
     }
 
@@ -43,6 +51,11 @@ public class CharacterCombat : MonoBehaviour {
     public virtual void TakeDamage(int damage)
     {
         stats.TakeDamage(damage);
+    }
+
+    public virtual void Heal(int heal)
+    {
+        stats.Heal(heal);
     }
     
     public virtual void StatBuff(StatEnum.StatType statEnum, int value, int buffLength = 1)
