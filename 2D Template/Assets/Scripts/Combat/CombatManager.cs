@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CombatManager : MonoBehaviour {
@@ -7,6 +8,7 @@ public class CombatManager : MonoBehaviour {
     public List<EnemyCombat> enemies { get; private set;}
     private Queue<CharacterCombat> characterOrder = new();
 
+    [SerializeField] private CombatMenuManager combatMenuManager;
     [SerializeField] private PlayerCombatMenu playerCombatMenu;
 
     public bool fight = true;
@@ -18,12 +20,11 @@ public class CombatManager : MonoBehaviour {
     
     public void Initialize(List<GameObject> playerObject, List<GameObject> enemyObjects)
     {
-        enabled = true;
-
         ResetCountingVariables();
         SortCharactersIntoQueue(playerObject, enemyObjects);
 
-        playerCombatMenu.Initialize(players, enemies, this);
+        combatMenuManager.Initialize(players, enemies);
+        playerCombatMenu.Initialize(players, enemies, this, combatMenuManager);
 
         StartCoroutine(StartCombat());
     }
@@ -45,7 +46,7 @@ public class CombatManager : MonoBehaviour {
 
     private IEnumerator PlayerTurn(PlayerCombat player)
     {
-        Debug.Log("Player turn" + player.name);
+        combatMenuManager.ActiveText("Player turn" + player.name);
         menuCommandGiven = false;
 
         player.StartTurn();
@@ -59,7 +60,7 @@ public class CombatManager : MonoBehaviour {
 
     private IEnumerator EnemyTurn(EnemyCombat enemy)
     {
-        Debug.Log("Enemy turn" + enemy.name);
+        combatMenuManager.ActiveText("Enemy turn" + enemy.name);
 
         enemy.StartTurn();
         EnemyAiAction(enemy);
@@ -73,12 +74,13 @@ public class CombatManager : MonoBehaviour {
         
         HandleActionResult(actionResult);
 
+        combatMenuManager.UpdateUI();
         menuCommandGiven = true;
     }
 
     private void HandleActionResult(ActionResult actionResult)
     {
-        if (actionResult.message != null) Debug.Log(actionResult.message);
+        if (actionResult.message != null) combatMenuManager.ActiveText(actionResult.message);
 
         switch (actionResult.resultType)
         {
@@ -111,7 +113,7 @@ public class CombatManager : MonoBehaviour {
 
     private bool NextTurnLogic(CharacterCombat currentCharacter)
     {
-        // CheckForDeaths();
+        CheckForDeaths();
 
         if (currentCharacter.stats.GetHealth() >= 0 && endUserTurn)
         {
@@ -119,8 +121,9 @@ public class CombatManager : MonoBehaviour {
             characterOrder.Enqueue(currentCharacter);
         }
 
-        bool fight = characterOrder.Count > 1;
+        combatMenuManager.UpdateUI();
 
+        bool fight = characterOrder.Count > 1;
         return fight;
     }
 
@@ -130,8 +133,18 @@ public class CombatManager : MonoBehaviour {
         {
             if (character.stats.GetHealth() <= 0)
             {
-                
+                var newTurnOrder = new Queue<CharacterCombat>(characterOrder.Where(x => x != character));
+                characterOrder = newTurnOrder;
                 character.EndBattle();
+
+                if (character is PlayerCombat player)
+                {
+                    players.Remove(player);
+                }
+                else
+                {
+                    enemies.Remove((EnemyCombat)character);
+                }
             }
         }
     }

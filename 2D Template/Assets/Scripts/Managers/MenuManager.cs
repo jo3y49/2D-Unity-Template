@@ -9,7 +9,7 @@ public class MenuManager : MonoBehaviour {
 
     public GameObject pauseMenu, inventoryMenu;
     private List<GameObject> menus;
-    public CombatMenuManager combatMenuManager;
+    public CombatManager combatManager;
 
     private void Awake() {
         Instance = this;
@@ -22,7 +22,7 @@ public class MenuManager : MonoBehaviour {
         Time.timeScale = 1;
 
         CloseMenus();
-        combatMenuManager.gameObject.SetActive(false);
+        combatManager.gameObject.SetActive(false);
 
         StartCoroutine(CountPlaytime());
     }
@@ -61,17 +61,17 @@ public class MenuManager : MonoBehaviour {
 
     public void StartCombat(List<GameObject> playerObjects, List<GameObject> enemyObjects)
     {
-        combatMenuManager.gameObject.SetActive(true);
+        combatManager.gameObject.SetActive(true);
         CloseMenus();
         DeactivateMenuControls();
         PlayerMovement.Instance.ToggleActive(false);
 
-        combatMenuManager.Initialize(playerObjects, enemyObjects);
+        combatManager.Initialize(playerObjects, enemyObjects);
     }
 
     public void EndCombat()
     {
-        combatMenuManager.gameObject.SetActive(false);
+        combatManager.gameObject.SetActive(false);
         ActivateMenuControls();
         PlayerMovement.Instance.ToggleActive(true);
     }

@@ -35,8 +35,6 @@ public static class CharacterActionList
             message = $"{user.name} missed!";
         }
 
-        Debug.Log(message);
-
         ActionResult result = new(user, resultType, damage)
         {
             stun = stun,

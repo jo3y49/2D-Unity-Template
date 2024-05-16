@@ -1,23 +1,27 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class PlayerCombatMenu : MonoBehaviour {
     public Button buttonPrefab;
     public GameObject attackButtonContainer, itemButtonContainer, enemyButtonContainer;
     private CombatManager combatManager;
+    private CombatMenuManager combatMenuManager;
     private Dictionary<PlayerCombat, PlayerCombatOptions> playerOptions = new();
     private Dictionary<EnemyCombat, Button> enemyButtons = new();
     private string selectedAction;
     private PlayerCombat activePlayer;
     private CharacterCombat target;
 
-    public void Initialize(List<PlayerCombat> players, List<EnemyCombat> enemies, CombatManager combatManager)
+    public void Initialize(List<PlayerCombat> players, List<EnemyCombat> enemies, CombatManager combatManager, CombatMenuManager combatMenuManager)
     {
         playerOptions.Clear();
         this.combatManager = combatManager;
+        this.combatMenuManager = combatMenuManager;
         
         SetPlayerButtons(players);
         SetEnemyButtons(enemies);
@@ -63,8 +67,9 @@ public class PlayerCombatMenu : MonoBehaviour {
             foreach (KeyValuePair<string, Button> attack in options.attacks)
             {
                 attack.Value.onClick.AddListener(() => SelectAction(attack.Key));
+                // attack.Value.OnPointerEnter((eventData) => HoverAction(attack.Key, eventData));
+
                 attack.Value.transform.SetParent(attackButtonContainer.transform);
-                
                 attack.Value.gameObject.SetActive(false);
             }
 
@@ -78,6 +83,11 @@ public class PlayerCombatMenu : MonoBehaviour {
 
             playerOptions.Add(player, options);
         }
+    }
+
+    private void HoverAction(string action, PointerEventData eventData)
+    {
+        combatMenuManager.ActiveText(action);
     }
 
     private void SetEnemyButtons(List<EnemyCombat> enemies)
